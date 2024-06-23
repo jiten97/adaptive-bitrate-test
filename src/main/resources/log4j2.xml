@@ -2,7 +2,7 @@
 <Configuration status="WARN" monitorInterval="30">
     <Properties>
         <Property name="LOG_PATTERN">
-            %d{yyyy-MM-dd'T'HH:mm:ss,z} [$${env:ENV_CUSTOM_NAME:-default}] %p [%tn] [%tid] [%X{uniqueId}] [%c{1}] [%M] %m%n
+            %d{yyyy-MM-dd'T'HH:mm:ss,z} %p [%tn] [%tid] [%c{1}] [%M] %m%n
         </Property>
     </Properties>
     <Appenders>
