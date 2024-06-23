@@ -29,8 +29,6 @@ public class DynamoDbRepository implements ApplicationRunner {
 
     @Value("${amazon-properties.dynamo-table-name}")
     private String dynamoTableName;
-    @Value("${amazon-properties.dynamo-table-gsi-upload-name}")
-    private String dynamoTableUploadGsiName;
     @Value("${amazon-properties.access-key}")
     private String AWS_ACCESS_KEY;
     @Value("${amazon-properties.secret-key}")
