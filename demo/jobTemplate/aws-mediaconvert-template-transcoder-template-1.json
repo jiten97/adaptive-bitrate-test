@@ -1,0 +1,147 @@
+{
+  "Name": "transcoder-template-1",
+  "Settings": {
+    "TimecodeConfig": {
+      "Source": "ZEROBASED"
+    },
+    "OutputGroups": [
+      {
+        "CustomName": "testencoder-template-test",
+        "Name": "Apple HLS",
+        "Outputs": [
+          {
+            "ContainerSettings": {
+              "Container": "M3U8",
+              "M3u8Settings": {}
+            },
+            "VideoDescription": {
+              "Width": 1920,
+              "Height": 1080,
+              "CodecSettings": {
+                "Codec": "H_264",
+                "H264Settings": {
+                  "MaxBitrate": 5000000,
+                  "RateControlMode": "QVBR",
+                  "SceneChangeDetect": "TRANSITION_DETECTION"
+                }
+              }
+            },
+            "AudioDescriptions": [
+              {
+                "CodecSettings": {
+                  "Codec": "AAC",
+                  "AacSettings": {
+                    "Bitrate": 96000,
+                    "CodingMode": "CODING_MODE_2_0",
+                    "SampleRate": 48000
+                  }
+                }
+              }
+            ],
+            "OutputSettings": {
+              "HlsSettings": {}
+            },
+            "NameModifier": "_1080p"
+          },
+          {
+            "ContainerSettings": {
+              "Container": "M3U8",
+              "M3u8Settings": {}
+            },
+            "VideoDescription": {
+              "Width": 1280,
+              "Height": 720,
+              "CodecSettings": {
+                "Codec": "H_264",
+                "H264Settings": {
+                  "MaxBitrate": 2500000,
+                  "RateControlMode": "QVBR",
+                  "SceneChangeDetect": "TRANSITION_DETECTION"
+                }
+              }
+            },
+            "AudioDescriptions": [
+              {
+                "CodecSettings": {
+                  "Codec": "AAC",
+                  "AacSettings": {
+                    "Bitrate": 96000,
+                    "CodingMode": "CODING_MODE_2_0",
+                    "SampleRate": 48000
+                  }
+                }
+              }
+            ],
+            "OutputSettings": {
+              "HlsSettings": {}
+            },
+            "NameModifier": "_720p"
+          },
+          {
+            "ContainerSettings": {
+              "Container": "M3U8",
+              "M3u8Settings": {}
+            },
+            "VideoDescription": {
+              "Width": 850,
+              "Height": 480,
+              "CodecSettings": {
+                "Codec": "H_264",
+                "H264Settings": {
+                  "MaxBitrate": 1200000,
+                  "RateControlMode": "QVBR",
+                  "SceneChangeDetect": "TRANSITION_DETECTION"
+                }
+              }
+            },
+            "AudioDescriptions": [
+              {
+                "CodecSettings": {
+                  "Codec": "AAC",
+                  "AacSettings": {
+                    "Bitrate": 96000,
+                    "CodingMode": "CODING_MODE_2_0",
+                    "SampleRate": 48000
+                  }
+                }
+              }
+            ],
+            "OutputSettings": {
+              "HlsSettings": {}
+            },
+            "NameModifier": "_480p"
+          }
+        ],
+        "OutputGroupSettings": {
+          "Type": "HLS_GROUP_SETTINGS",
+          "HlsGroupSettings": {
+            "SegmentLength": 10,
+            "DestinationSettings": {
+              "S3Settings": {
+                "StorageClass": "STANDARD"
+              }
+            },
+            "MinSegmentLength": 0
+          }
+        }
+      }
+    ],
+    "Inputs": [
+      {
+        "AudioSelectors": {
+          "Audio Selector 1": {
+            "DefaultSelection": "DEFAULT"
+          }
+        },
+        "VideoSelector": {},
+        "TimecodeSource": "ZEROBASED"
+      }
+    ]
+  },
+  "AccelerationSettings": {
+    "Mode": "DISABLED"
+  },
+  "StatusUpdateInterval": "SECONDS_60",
+  "Priority": 0,
+  "HopDestinations": []
+}

@@ -1,14 +1,14 @@
 
 # Adaptive Bitrate
-Project is about implementation of adaptive bitrate streaming to stream videos while adjusting the bitrate transfer of video segments for continous buffering of video. It helps in better user experience by dynamically adjusting bitrate transfer on the basis of user's network condition.
+Project is about implementation of adaptive bitrate streaming to stream videos while adjusting the bitrate transfer of video segments for continuous buffering of video. It helps in better user experience by dynamically adjusting bitrate transfer on the basis of user's network condition.
 ## Transfer Protocol
-Common file transer protocols:
+Common file transfer protocols:
 - **HLS(HTTP Live Streaming):** Developed by Apple, widely used by IOS devices.
 - **MPEG-DASH(Dynamic Adaptive Streaming over HTTP):** An open standard, widely used by different platforms
 - **Microsoft Smooth Streaming:** Developed by Microsoft, widely used for Microsoft environment.
 - **CMAF (Common Media Application Format):** Joint contribution by Apple, Microsoft, MPEG, etc. for standardisation and low latency solution for HLS and MPEG-DASH both.
 
-In this project, we are mainly looking at using HLS Protocol for Adaptive Bitrate file transfer over the network.
+In this project, we are mainly looking at using HLS Protocol for Adaptive bitrate file transfer over the network.
 ## High Level Design
 Key components for file streaming service:
 - **Server:** Main servers that manages hosting and streaming of video.
@@ -19,28 +19,28 @@ Key components for file streaming service:
 
 ### HLS Protocol
 To make dynamic switching between different bitrates based on user's network condition, Transcoding of the file is needed into smaller chunks. Key components:
-- **Segments:** File is divided in small chunks, typically into 6-10 seconds. They are requested and buffered individually, making the streaming smooth as there will be continous fetching of these chunks, instead one-time buffer/download of whole video. These chunks can help in switching between different quality of video on the basis of network condition.
-- **Manifest:** Main .m3u8 file that contains all the information of different chunks. It helps in identifying the chunk by bandwidth, resoltution, codecs, etc.
+- **Segments:** File is divided in small chunks, typically into 6-10 seconds. They are requested and buffered individually, making the streaming smooth as there will be continuous fetching of these chunks, instead one-time buffer/download of whole video. These chunks can help in switching between different quality of video on the basis of network condition.
+- **Manifest:** Main .m3u8 file that contains all the information of different chunks. It helps in identifying the chunk by bandwidth, resolution, codecs, etc.
 
 ### Server
 Server can be divided into different components:
 - **Front-End:** That will help in hosting the website to upload and stream the video content.
 - **Backend-Server:** That will help in upload and processing of video file.
-- **File Storage:** That will save the raw file, along with the processed file. Eg. AWS S3.
-- **Database:** To save file related information, to retrieve file from file storage. It can be SQL/No-SQL, depending upon usage but we are going to use serverless No-SQL AWS DynamoDB.
+- **File Storage:** That will save the raw file, along with the processed file. E.g. AWS S3.
+- **Database:** To save file related information, to retrieve file from file storage. It can be SQL/No-SQL, depending upon usage, but we are going to use serverless No-SQL AWS DynamoDB.
 ## Low Level Design
-Let us deep dive into scalling of application.
-### Upload scalling
-There is an issue of uploading large files in go as there can be limit in http request size, server bandwidth(eg. nginx, loadbalancer, server size). To overcome these chllenges, front-end can divide file into smaller chunks(eg. 10MB) to utilize the multipart upload feature of S3 upload. Multipart upload is divided into 3 parts:
+Let us deep dive into scaling of application.
+### Upload scaling
+There is an issue of uploading large files in go as there can be limit in http request size, server bandwidth(e.g. nginx, load balancer, server size). To overcome these challenges, front-end can divide file into smaller chunks(e.g. 10MB) to utilize the multipart upload feature of S3 upload. Multipart upload is divided into 3 parts:
 - **Initiation:** Initiation of multipart upload. Which provides uploadId to upload parts of file.
-- **Parts Upload:** Divide the file into multiple parts(eg.10MB) size and send it by multipart/form-data http call.
+- **Parts Upload:** Divide the file into multiple parts(e.g.10MB) size and send it by multipart/form-data http call.
 - **Completion:** Sum up all the parts by providing details of each individual part upload.
-### Transcoding Scalling
+### Transcoding Scaling
 We need a queue and server to off-load the Transcoding task to scale and reduce server load. We are going to use **AWS Elemental MediaConvert** to queue and transcode video. Following process needs to be done:
 - **Queue:** It will push the job to transcode the file. We are going to use the Default queue in this project.
 - **Template:** We need to create job template to use the transcoding specification in our code. We can also create the same template specification by using code itself.
 ### File Storage
-We have 2 types of file, ie raw and transcoded. We need to create 2 separate buckets on the for file storage, ie private bucket and public bucket. **Private bucket** is needed to restrict upload of file to S3, by using Authorisation(However, project doesn't have that part yet). **Public bucket** is needed for transcoded files to provide streaming access with getobject public permission.
+We have 2 types of file, ie raw and transcode. We need to create 2 separate buckets on the for file storage, ie private bucket and public bucket. **Private bucket** is needed to restrict upload of file to S3, by using Authorisation(However, project doesn't have that part yet). **Public bucket** is needed for transcoding files to provide streaming access with get-object public permission.
 ## API Reference
 
 ### Initiate Multipart upload
@@ -50,11 +50,11 @@ It is a POST method with Json-formatted body to initiate multipart upload reques
   POST /video/multipart/v1/initiate
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `fileName` | `String` | Orginal name of the file |
-| `fileSize` | `Long` | Original size of the file |
-| `contentType` | `String` | Original meme type of the file |
+| Parameter     | Type       | Description                    |
+|:--------------|:-----------|:-------------------------------|
+| `fileName`    | `String`   | Original name of the file      |
+| `fileSize`    | `Long`     | Original size of the file      |
+| `contentType` | `String`   | Original meme type of the file |
 
 #### Example
 ```sh
@@ -76,23 +76,23 @@ curl --location 'http://localhost:8080/video/multipart/v1/initiate' \
 ```
 
 ### Multipart Upload - Parts
-It is a upload http call with several bifurcated parts of large file. It is a multipart/form-data request.
+It is an upload http call with several bifurcated parts of large file. It is a multipart/form-data request.
 
 ```http
   POST /video/multipart/v1/upload
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `file` | `File` | File Content |
-| `fileKey` | `String` | fileKey that is received while initiation |
-| `partNumber` | `String` | Part Number of bifurcated file |
-| `isLast` | `String` | to identify if this part is last part |
+| Parameter    | Type       | Description                               |
+|:-------------|:-----------|:------------------------------------------|
+| `file`       | `File`     | File Content                              |
+| `fileKey`    | `String`   | fileKey that is received while initiation |
+| `partNumber` | `String`   | Part Number of bifurcated file            |
+| `isLast`     | `String`   | to identify if this part is last part     |
 
 #### Example
 ```sh
 curl --location 'http://localhost:8080/video/multipart/v1/upload' \
---form 'file=@"/Users/jitendhawan/Downloads/2836305-uhd_3840_2160_24fps.mp4"' \
+--form 'file=@"/Users/user/Downloads/2836305-uhd_3840_2160_24fps.mp4"' \
 --form 'fileKey="e8347800-0015-423a-8adc-ed31774f4641"' \
 --form 'partNumber="2"' \
 --form 'isLast="false"'
@@ -113,9 +113,9 @@ It is a POST method with Json-formatted body to Complete and compile all parts o
   POST /video/multipart/v1/complete
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `fileKey` | `String` | fileKey that is received while initiation |
+| Parameter         | Type        | Description                                                                                        |
+|:------------------|:------------|:---------------------------------------------------------------------------------------------------|
+| `fileKey`         | `String`    | fileKey that is received while initiation                                                          |
 | `eTagDetailArray` | `JsonArray` | Array of eTag details of all parts that were received in response during upload of different parts |
 
 #### Example
@@ -165,6 +165,63 @@ curl --location 'localhost:8080/video/multipart/v1/complete' \
 {
     "fileKey":"e8347800-0015-423a-8adc-ed31774f4641",
     "transcodeJobId":"1719157993658-r5b8ps",
-    "transcodePath":"s3://public-bucket/path/e8347800-0015-423a-8adc-ed31774f4641/index"
+    "transcodePath":"public-bucket/hls_test/289fc043-b73b-4f70-a374-57012383ae92/index"
 }
 ```
+
+### Transcoding Status Check
+It is a GET method with Json-formatted body to check transcoding status.
+
+```http
+  POST /video/transcoding/v1/status/{transcodingId}
+```
+
+| Parameter       | Type       | Description                                                     |
+|:----------------|:-----------|:----------------------------------------------------------------|
+| `transcodingId` | `String`   | transcodeJobId that we received from complete multipart request |
+
+#### Example
+```sh
+curl --location 'localhost:8080/video/transcoding/v1/status/1719157993658-r5b8ps'
+```
+
+#### Success Response Body
+```json
+{
+    "status":"PROGRESSING"
+}
+```
+
+## Demo
+This project already contains some template.
+### Template Setup
+There is a sample job template that can help in creating Job template. Steps:
+1. Go to AWS Elemental MediaConverter.
+2. Select Job Templates on the left menu. ![Select Job Template](./demo/screenshot/selectJobTemplate.png)
+3. Select Import Template option on the top-right side. ![Select Import Template](./demo/screenshot/selectJobImport.png)
+4. Select the sample json that is saved in demo/jobTemplate/aws-mediaconvert-template-transcoder-template-1.json.
+
+Or You can Select Create Template to create template from scratch and refer to standard resolutions. Steps to create new template:
+1. Select Create Template in Job Templates.
+2. Fill Out the Template Information.![Fill up template Information](./demo/screenshot/templateInfo.png)
+3. Click on ADD option in Output groups.![Add Output groups](./demo/screenshot/outputGroups.png)
+4. Select Apple HLS.![Select Apple HLS](./demo/screenshot/appleHLS.png)
+5. Keep Default settings for now and create output manifests for different resolutions for transcoding by adding Outputs in the last. Also add manifest name modifier for each resolution![Add Output Manifests](./demo/screenshot/outputManifest.png)
+6. After adding these output, we can see them added in the output groups section in left side. Now go to each section and update settings.![New Sections of Output Manifests](./demo/screenshot/ouputGroupManifests.png)
+7. By keeping default settings and changing only 3 things in each group, we can modify manifests file for usage. Settings might differ![Output Setting](./demo/screenshot/outputSetting.png)
+8. Create Job template by choosing Select button in the bottom-right.![Select Create Button](./demo/screenshot/createTemplate.png)
+9. Now need to create MediaConverter role to use and connect it with S3. By adding 2 Permissions, i.e. AmazonAPIGatewayInvokeFullAccess and AmazonS3FullAccess.
+
+| Output Manifest | Width | Height | Max Bitrate |
+|-----------------|-------|--------|-------------|
+| _1080p          | 1920  | 1080   | 5000000     |
+| _720p           | 1280  | 720    | 2500000     |
+| _480p           | 850   | 480    | 1200000     |
+
+### Front-End Demo Code
+#### Uploading
+For uploading sample html and javascript file is provided in demo/uploading.
+#### Player
+After Transcoding, final output can be played through a sample player html file (demo/hlsPlayer/hls_try.html) after changing the url by getting it from final m3u8 S3 url. After opening the final index.m3u8 file, open it and get the url.
+![Copy final URL](./demo/screenshot/indexUrl.png)
+
