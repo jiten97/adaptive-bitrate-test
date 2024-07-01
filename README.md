@@ -227,13 +227,14 @@ There is a sample job template that can help in creating Job template. Steps:
 Or You can Select Create Template to create template from scratch and refer to standard resolutions. Steps to create new template:
 1. Select Create Template in Job Templates.
 2. Fill Out the Template Information.![Fill up template Information](./demo/screenshot/templateInfo.png)
-3. Click on ADD option in Output groups.![Add Output groups](./demo/screenshot/outputGroups.png)
-4. Select Apple HLS.![Select Apple HLS](./demo/screenshot/appleHLS.png)
-5. Keep Default settings for now and create output manifests for different resolutions for transcoding by adding Outputs in the last. Also add manifest name modifier for each resolution![Add Output Manifests](./demo/screenshot/outputManifest.png)
-6. After adding these output, we can see them added in the output groups section in left side. Now go to each section and update settings.![New Sections of Output Manifests](./demo/screenshot/ouputGroupManifests.png)
-7. By keeping default settings and changing only 3 things in each group, we can modify manifests file for usage. Settings might differ![Output Setting](./demo/screenshot/outputSetting.png)
-8. Create Job template by choosing Select button in the bottom-right.![Select Create Button](./demo/screenshot/createTemplate.png)
-9. Now need to create MediaConverter role to use and connect it with S3. By adding 2 Permissions, i.e. AmazonAPIGatewayInvokeFullAccess and AmazonS3FullAccess.
+3. Add Inputs but don't fill any information in it yet as We will add it dynamically by code.![Add Inputs groups](./demo/screenshot/addInputs.png)
+4. Click on ADD option in Output groups.![Add Output groups](./demo/screenshot/outputGroups.png)
+5. Select Apple HLS.![Select Apple HLS](./demo/screenshot/appleHLS.png)
+6. Keep Default settings for now and create output manifests for different resolutions for transcoding by adding Outputs in the last. Also add manifest name modifier for each resolution![Add Output Manifests](./demo/screenshot/outputManifest.png)
+7. After adding these output, we can see them added in the output groups section in left side. Now go to each section and update settings.![New Sections of Output Manifests](./demo/screenshot/ouputGroupManifests.png)
+8. By keeping default settings and changing only 3 things in each group, we can modify manifests file for usage. Settings might differ![Output Setting](./demo/screenshot/outputSetting.png)
+9. Create Job template by choosing Select button in the bottom-right.![Select Create Button](./demo/screenshot/createTemplate.png)
+10. Now need to create MediaConverter role to use and connect it with S3. By adding 2 Permissions, i.e. AmazonAPIGatewayInvokeFullAccess and AmazonS3FullAccess.
 
 | Output Manifest | Width | Height | Max Bitrate |
 |-----------------|-------|--------|-------------|
