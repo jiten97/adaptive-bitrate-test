@@ -58,10 +58,10 @@ public class MediaConverterServiceImpl implements MediaConverterService, Applica
 
             OutputGroupSettings outputGroupSettings = new OutputGroupSettings();
 
-            String transcodePath = transcodeBucketName+"/"+transcodeFolderPath + "/" + fileKey + "/index";
+            String transcodePath = transcodeFolderPath + "/" + fileKey + "/index";
             logger.info("TransCode path created: {}", transcodePath);
             HlsGroupSettings hlsGroupSettings = new HlsGroupSettings()
-                    .withDestination("s3://"+transcodePath);
+                    .withDestination("s3://"+transcodeBucketName+"/"+transcodePath);
             outputGroupSettings.withHlsGroupSettings(hlsGroupSettings);
 
             jobSettings.setOutputGroups(List.of(new OutputGroup().withOutputGroupSettings(outputGroupSettings)));
@@ -69,7 +69,7 @@ public class MediaConverterServiceImpl implements MediaConverterService, Applica
                     .withSettings(jobSettings)
                     .withRole(mediaConverterRole);
 
-            return Pair.of(transcodePath,awsMediaConvertClient.createJob(createJobRequest));
+            return Pair.of(transcodePath+".m3u8",awsMediaConvertClient.createJob(createJobRequest));
         }catch (Exception e){
             logger.error("Exception while creating job for: {} with Exception: {}",fileKey,e.getMessage());
             throw e;

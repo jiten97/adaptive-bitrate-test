@@ -84,4 +84,9 @@ public class VideoController {
         statusResponse.put("status",mediaConverterService.checkingJobStatus(transcodeJobId));
         return ResponseEntity.ok(statusResponse.toString());
     }
+    @GetMapping(value = "/video/v1/url/{fileKey}")
+    public ResponseEntity<String> fetchVideoUrl(@PathVariable("fileKey") String fileKey) throws Exception {
+        logger.info("Fetching Url for: {}",fileKey);
+        return ResponseEntity.ok(videoService.videoUrl(fileKey).toString());
+    }
 }

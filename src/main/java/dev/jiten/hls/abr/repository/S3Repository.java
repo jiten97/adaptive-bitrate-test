@@ -17,8 +17,11 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Repository
 public class S3Repository implements ApplicationRunner {
@@ -29,6 +32,8 @@ public class S3Repository implements ApplicationRunner {
 
     @Value("${amazon-properties.upload-bucket-name}")
     private String uploadBucketName;
+    @Value("${amazon-properties.transcode-bucket-name}")
+    private String transcodeBucketName;
     @Value("${amazon-properties.access-key}")
     private String AWS_ACCESS_KEY;
     @Value("${amazon-properties.secret-key}")
@@ -92,5 +97,14 @@ public class S3Repository implements ApplicationRunner {
             logger.error("Exception while Completing Multipart for : {} with Exception: {}",uploadId,e.getMessage());
             throw e;
         }
+    }
+    public String generatePreSignedUrl(String path){
+        logger.info("Generate url request for: {}",path);
+        long currentTimeStamp = System.currentTimeMillis();
+        Date expiry = new Date((currentTimeStamp+ TimeUnit.HOURS.toMillis(1)));
+        logger.info("Expiry Date created for url: {}",expiry.toString());
+        URL url= amazonS3Client.generatePresignedUrl(transcodeBucketName,path,expiry);
+        logger.info("Url generated: {}", url.toString());
+        return url.toString();
     }
 }

@@ -16,6 +16,7 @@ Key components for file streaming service:
 - **CDN:** Geographical distributed system to bring file content near to end user.
 - **Protocol:** We are focusing HLS based file transfer protocol.
 - **Database:** To store details and content of file.
+![High Level Design](./demo/screenshot/highLevelDesign.png)
 
 ### HLS Protocol
 To make dynamic switching between different bitrates based on user's network condition, Transcoding of the file is needed into smaller chunks. Key components:
@@ -41,6 +42,8 @@ We need a queue and server to off-load the Transcoding task to scale and reduce 
 - **Template:** We need to create job template to use the transcoding specification in our code. We can also create the same template specification by using code itself.
 ### File Storage
 We have 2 types of file, ie raw and transcode. We need to create 2 separate buckets on the for file storage, ie private bucket and public bucket. **Private bucket** is needed to restrict upload of file to S3, by using Authorisation(However, project doesn't have that part yet). **Public bucket** is needed for transcoding files to provide streaming access with get-object public permission.
+![Low Level Design](./demo/screenshot/lowLevelDesign.png)
+
 ## API Reference
 
 ### Initiate Multipart upload
@@ -170,10 +173,10 @@ curl --location 'localhost:8080/video/multipart/v1/complete' \
 ```
 
 ### Transcoding Status Check
-It is a GET method with Json-formatted body to check transcoding status.
+It is a GET method with path variable to check transcoding status.
 
 ```http
-  POST /video/transcoding/v1/status/{transcodingId}
+  GET /video/transcoding/v1/status/{transcodingId}
 ```
 
 | Parameter       | Type       | Description                                                     |
@@ -190,6 +193,26 @@ curl --location 'localhost:8080/video/transcoding/v1/status/1719157993658-r5b8ps
 {
     "status":"PROGRESSING"
 }
+```
+### Generate Video URL
+It is a GET request with path variable which generates pre-signed url of video with 1 hour time limit.
+
+```http
+  GET /video/video/v1/url/{fileKey}
+```
+
+| Parameter   | Type        | Description                                              |
+|:------------|:------------|:---------------------------------------------------------|
+| `fileKey`   | `String`    | fileKey that we received from initiate multipart request |
+
+#### Example
+```sh
+curl --location 'localhost:8080/video/video/v1/url/f9529582-6590-4e37-94ac-5c9c26b4669d'
+```
+
+#### Success Response Body
+```json
+{"url":"https://dev.jiten.public.test1.s3.ap-south-1.amazonaws.com/hls_test/f9529582-6590-4e37-94ac-5c9c26b4669d/index.m3u8?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240701T114725Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3599&X-Amz-Credential=AKIA4IOEUU7PMF76TK44%2F20240701%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Signature=4ede234eb289173875c423edc77825378a053ace31cff0c14b2287ad2c0de537"}
 ```
 
 ## Demo
@@ -222,6 +245,4 @@ Or You can Select Create Template to create template from scratch and refer to s
 #### Uploading
 For uploading sample html and javascript file is provided in demo/uploading.
 #### Player
-After Transcoding, final output can be played through a sample player html file (demo/hlsPlayer/hls_try.html) after changing the url by getting it from final m3u8 S3 url. After opening the final index.m3u8 file, open it and get the url.
-![Copy final URL](./demo/screenshot/indexUrl.png)
-
+Demo template of player is provided in demo/hlsPlayer/hls_try.html. Just replace the url that one receive from **Generate Video URL** api.

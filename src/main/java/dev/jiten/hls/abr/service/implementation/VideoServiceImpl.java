@@ -163,4 +163,18 @@ public class VideoServiceImpl implements VideoService {
         logger.info("Item received from dynamo: {}",dynamoData.toString());
         return dynamoData;
     }
+
+    public JSONObject videoUrl(String fileKey) throws Exception{
+        JSONObject response = new JSONObject();
+        try {
+            JSONObject fileData = dynamoDbRepository.getItem(fileKey);
+            String transcodedPath =fileData.getString("TranscodingPath");
+            String url = s3Repository.generatePreSignedUrl(transcodedPath);
+            response.put("url",url);
+            return response;
+        }catch (Exception e){
+            logger.error("Exception while fetching video url: {}",e.getMessage());
+            throw e;
+        }
+    }
 }
